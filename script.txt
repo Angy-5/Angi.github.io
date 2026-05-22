@@ -1,0 +1,84 @@
+var T=[],G=1,P=1,B=0,A=0,F=20,C=20,M=60;
+
+function I(){
+T=[];G=P=1;B=A=0;
+document.getElementById('b').innerHTML='0';
+document.getElementById('msg').innerHTML='';
+document.getElementById('s').innerHTML='😊';
+var h='';
+for(var f=0;f<F;f++){
+T[f]=[];
+for(var c=0;c<C;c++){
+T[f][c]={m:0,o:0,f:0,n:0};
+h+='<div class="celda" id="c'+f+'_'+c+'" onclick="K('+f+','+c+')" oncontextmenu="R('+f+','+c+');return false;"></div>';
+}
+}
+document.getElementById('tablero').innerHTML=h;
+}
+
+function Z(fx,cx){
+var p=0;
+while(p<M){
+var f=Math.floor(Math.random()*F),c=Math.floor(Math.random()*C);
+if(!T[f][c].m&&(Math.abs(f-fx)>1||Math.abs(c-cx)>1)){T[f][c].m=1;p++}
+}
+for(var f=0;f<F;f++)for(var c=0;c<C;c++)if(!T[f][c].m){
+var n=0;
+for(var i=-1;i<=1;i++)for(var j=-1;j<=1;j++){
+var nf=f+i,nc=c+j;
+if(nf>=0&&nf<F&&nc>=0&&nc<C&&T[nf][nc].m)n++;
+}
+T[f][c].n=n;
+}
+}
+
+function K(f,c){
+if(!G||T[f][c].f||T[f][c].o)return;
+if(P){Z(f,c);P=0}
+O(f,c);
+}
+
+function R(f,c){
+if(!G||T[f][c].o)return;
+var e=T[f][c],d=document.getElementById('c'+f+'_'+c);
+if(e.f){e.f=0;d.classList.remove('bandera');d.innerHTML='';B--}
+else{e.f=1;d.classList.add('bandera');d.innerHTML='🚩';B++}
+document.getElementById('b').innerHTML=B;
+}
+
+function O(f,c){
+var e=T[f][c];
+if(e.o||e.f)return;
+e.o=1;A++;
+var d=document.getElementById('c'+f+'_'+c);
+d.classList.add('abierta');
+if(e.m)return L();
+if(e.n>0){d.innerHTML=e.n;d.classList.add('c'+e.n)}
+else for(var i=-1;i<=1;i++)for(var j=-1;j<=1;j++){
+var nf=f+i,nc=c+j;
+if(nf>=0&&nf<F&&nc>=0&&nc<C)O(nf,nc);
+}
+if(A==F*C-M)W();
+}
+
+function L(){
+G=0;
+document.getElementById('s').innerHTML='😵';
+document.getElementById('msg').innerHTML='💥 Perdiste';
+document.getElementById('msg').style.color='#ef4444';
+for(var f=0;f<F;f++)for(var c=0;c<C;c++)if(T[f][c].m){
+var d=document.getElementById('c'+f+'_'+c);
+d.innerHTML='💣';
+d.classList.add('bomba');
+}
+}
+
+function W(){
+G=0;
+document.getElementById('s').innerHTML='😎';
+document.getElementById('msg').innerHTML='🎉 ¡Ganaste!';
+document.getElementById('msg').style.color='#22c55e';
+}
+
+document.getElementById('s').onclick=I;
+window.onload=I;
